@@ -26,6 +26,7 @@ import { post } from 'axios';
 import SnackbarContent from "components/Snackbar/SnackbarContent.js";
 import Snackbar from "components/Snackbar/Snackbar.js";
 
+import Editor from "views/Editor"
 import {server_uri,httpClient} from "Net/requests_info.js"
 
 const styles = {
@@ -72,8 +73,8 @@ export default function Handlers() {
           }, time);
   };
 
-  let onUpload = (files)=>{
-    setFile(files[0])
+  let onUpload = (file)=>{
+    setFile(file)
     setNotificationInfo({message:"File was uploaded!",type:"info"})
     showNotification(6000)
   };
@@ -179,39 +180,15 @@ export default function Handlers() {
                      <GridContainer>
                 <GridItem xs={12} sm={12} md={3}>
                 </GridItem>
-                <GridItem xs={4} sm={4} md={3}>
-              <Button
-                variant="contained"
-                color="default"
-                className={classes.button}
-                startIcon={<CreateIcon />}
-                href="https://editor.swagger.io/"
-              >
-                Create yaml
-              </Button>
-                </GridItem>
-                <GridItem xs={4} sm={4} md={3}>
-    
-                <label className={styles.uploader}>
-              <Button
-                variant="contained"
-                color="default"
-                type="file" 
-                className={classes.button}
-                startIcon={<CloudUploadIcon />}
-              >
-            
-            <input type="file"  multiple style={{ opacity: 0,overflow: "hidden", position: "absolute"}}
-            onChange={e => {
-              onUpload([...e.target.files])}}/>
-         
-
-            Upload yaml
-            
-              </Button>
-              </label>
-
-                </GridItem>
+              
+              
+              <GridItem xs={4} sm={4} md={4}>
+              <Editor 
+                handler={onUpload} 
+                handlerName="Send file"/>
+              </GridItem>
+      
+ 
               </GridContainer>
               
   

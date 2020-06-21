@@ -42,6 +42,9 @@ import RTLPage from "views/RTLPage/RTLPage.js";
 import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import ListAltIcon from '@material-ui/icons/ListAlt';
+import React from "react";
+import Editor from "views/Editor"
+
 const dashboardRoutes = [
   {
     path: "/services_list",
@@ -83,14 +86,6 @@ const dashboardRoutes = [
     component: Configs,
     layout: "/admin"
   },
-  // {
-  //   path: "/dash",
-  //   name: "Create dash",
-  //   rtlName: "ملف تعريفي للمستخدم",
-  //   icon: PanToolIcon,
-  //   component: Dashboard,
-  //   layout: "/admin"
-  // },
   
 ];
 

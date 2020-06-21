@@ -26,6 +26,7 @@ import { post } from 'axios';
 import SnackbarContent from "components/Snackbar/SnackbarContent.js";
 import Snackbar from "components/Snackbar/Snackbar.js";
 
+import Editor from "views/Editor";
 import {server_uri,httpClient} from "Net/requests_info.js"
 
 const styles = {
@@ -95,6 +96,8 @@ export default function UserProfile() {
     
     return  httpClient.post(url, formData,config)
   }
+
+
 
   let create_service = (e)=>{
     e.preventDefault() // Stop form submit
