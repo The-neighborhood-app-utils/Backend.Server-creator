@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ['Set Server name', 'Create yaml', 'Create service'];
+  return ['Set Service name', 'Create yaml', 'Create service'];
 }
 
 function getStepContent(step) {
