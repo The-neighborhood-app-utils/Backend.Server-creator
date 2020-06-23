@@ -4,8 +4,8 @@
 * Material Dashboard React - v1.9.0
 =========================================================
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
+* Product Page: https://www.elaborate.com/product/material-dashboard-react
+* Copyright 2020 Creative Tim (https://www.elaborate.com)
 * Licensed under MIT (https://github.com/creativetimofficial/material-dashboard-react/blob/master/LICENSE.md)
 
 * Coded by Creative Tim
@@ -25,16 +25,20 @@ import Admin from "layouts/Admin.js";
 import RTL from "layouts/RTL.js";
 
 import "assets/css/material-dashboard-react.css?v=1.9.0";
+import store from 'store'
+import { Provider } from 'react-redux';
 
 const hist = createBrowserHistory();
 
 ReactDOM.render(
+<Provider store={store}>
   <Router history={hist}>
     <Switch>
       <Route path="/admin" component={Admin} />
       <Route path="/rtl" component={RTL} />
       <Redirect from="/" to="/admin/services_list" />
     </Switch>
-  </Router>,
+  </Router>
+  </Provider>,
   document.getElementById("root")
 );

@@ -183,6 +183,7 @@ export default function Clients() {
                
                 <GridItem xs={4} sm={4} md={3}>
               <Editor 
+                linkForDownload={server_uri+"/"+"get_client/template_service/client"}
                 handler={onUpload} 
                 handlerName="Send file"/>
               </GridItem>

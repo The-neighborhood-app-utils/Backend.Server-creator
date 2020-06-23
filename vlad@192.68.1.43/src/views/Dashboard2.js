@@ -4,8 +4,8 @@
 * Black Dashboard React v1.1.0
 =========================================================
 
-* Product Page: https://www.creative-tim.com/product/black-dashboard-react
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
+* Product Page: https://www.elaborate.com/product/black-dashboard-react
+* Copyright 2020 Creative Tim (https://www.elaborate.com)
 * Licensed under MIT (https://github.com/creativetimofficial/black-dashboard-react/blob/master/LICENSE.md)
 
 * Coded by Creative Tim

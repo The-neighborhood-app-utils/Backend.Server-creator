@@ -195,7 +195,7 @@ export default function UpgradeToPro() {
                       <Button
                         round
                         color="danger"
-                        href="https://www.creative-tim.com/product/material-dashboard-pro-react?ref=mdr-upgrade-live"
+                        href="https://www.elaborate.com/product/material-dashboard-pro-react?ref=mdr-upgrade-live"
                       >
                         Upgrade to Pro
                       </Button>

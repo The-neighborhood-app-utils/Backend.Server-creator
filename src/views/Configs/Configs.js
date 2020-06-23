@@ -185,6 +185,7 @@ export default function Configs() {
                
                 <GridItem xs={4} sm={4} md={4}>
               <Editor 
+                linkForDownload={server_uri+"/"+"get_config/template_service/config"}
                 handler={onUpload} 
                 handlerName="Send file"/>
               </GridItem>

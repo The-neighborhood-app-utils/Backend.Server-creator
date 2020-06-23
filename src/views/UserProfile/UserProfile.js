@@ -126,8 +126,93 @@ const styles = {
 };
 
 // const useStyles = makeStyles(styles);
+// const [activeStep, setActiveStep] = React.useState(0);
+// const [skipped, setSkipped] = React.useState(new Set());
+// const steps = getSteps();
 
 
+// const isStepOptional = (step) => {
+//   return step === 1;
+// };
+
+// const isStepSkipped = (step) => {
+//   return skipped.has(step);
+// };
+
+// const handleNext = () => {
+//   if(activeStep == 0)
+//     check_name(name).then((response)=>{
+//       setNotificationInfo({message:"Correct service name",type:"info"})
+//       showNotification(6000)
+
+//       let newSkipped = skipped;
+//       if (isStepSkipped(activeStep)) {
+//         newSkipped = new Set(newSkipped.values());
+//         newSkipped.delete(activeStep);
+//       }
+//       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+//       setSkipped(newSkipped);
+
+//     }, error =>{
+//       let response = error.response ? error.response.data: error.response
+//       let status = error.response ? error.response.status: error.response
+//       setNotificationInfo({message:"Error message:"+JSON.stringify(response)+" Status code:"+status,type:"danger"})
+//       showNotification(1000000)
+//     })
+//     else{
+//       let newSkipped = skipped;
+//       if (isStepSkipped(activeStep)) {
+//         newSkipped = new Set(newSkipped.values());
+//         newSkipped.delete(activeStep);
+//       }
+//       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+//       setSkipped(newSkipped);
+//     }
+// };
+
+// const handleBack = () => {
+//   setActiveStep((prevActiveStep) => prevActiveStep - 1);
+// };
+
+// const handleSkip = () => {
+//   if (!isStepOptional(activeStep)) {
+//     // You probably want to guard against something like this,
+//     // it should never occur unless someone's actively trying to break something.
+//     throw new Error("You can't skip a step that isn't optional.");
+//   }
+
+//   setActiveStep((prevActiveStep) => prevActiveStep + 1);
+//   setSkipped((prevSkipped) => {
+//     const newSkipped = new Set(prevSkipped.values());
+//     newSkipped.add(activeStep);
+//     return newSkipped;
+//   });
+// };
+
+// const handleReset = () => {
+//   setActiveStep(0);
+// };
+
+
+
+{/* <div className={classes.root}>
+      <Stepper activeStep={activeStep}>
+        {steps.map((label, index) => {
+          const stepProps = {};
+          const labelProps = {};
+          if (isStepOptional(index)) {
+            // labelProps.optional = <Typography variant="caption">Optional</Typography>;
+          }
+          if (isStepSkipped(index)) {
+            stepProps.completed = false;
+          }
+          return (
+            <Step key={label} {...stepProps}>
+              <StepLabel {...labelProps}>{label}</StepLabel>
+            </Step>
+          );
+        })}
+      </Stepper> </div>*/}
 
 export default function UserProfile(props) {
   const classes = useStyles();
@@ -326,7 +411,6 @@ export default function UserProfile(props) {
           );
         })}
       </Stepper>
-
     </div>
   
 
@@ -374,6 +458,8 @@ export default function UserProfile(props) {
 </GridItem>
               <GridItem xs={4} sm={4} md={4}>
               <Editor 
+                offBoard={true}
+                linkForDownload={server_uri+"/"+"get_service/template_service"}
                 handler={onUpload} 
                 handlerName="Send file"/>
               </GridItem>

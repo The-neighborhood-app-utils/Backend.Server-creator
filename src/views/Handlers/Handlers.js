@@ -184,6 +184,7 @@ export default function Handlers() {
               
               <GridItem xs={4} sm={4} md={4}>
               <Editor 
+                linkForDownload={server_uri+"/"+"get_handler/template_service/handler"}
                 handler={onUpload} 
                 handlerName="Send file"/>
               </GridItem>

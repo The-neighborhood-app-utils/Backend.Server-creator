@@ -138,7 +138,7 @@ export default function Notifications() {
           and styled by{" "}
           <a
             target="_blank"
-            href="https://www.creative-tim.com/?ref=mdr-notifications-page"
+            href="https://www.elaborate.com/?ref=mdr-notifications-page"
           >
             Creative Tim
           </a>

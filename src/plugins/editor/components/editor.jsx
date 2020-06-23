@@ -68,7 +68,7 @@ export default function makeEditor({ editorPluginsToRun }) {
       errors: fromJS([]),
       editorActions: {onLoad(){}},
       editorOptions: {},
-      debounce: 800 // 0.5 imperial seconds™
+      debounce: 10 // 0.5 imperial seconds™
 
     }
 

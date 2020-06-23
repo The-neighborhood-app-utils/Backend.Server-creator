@@ -58,6 +58,8 @@ import SaveIcon from '@material-ui/icons/Save';
 import Uploader from "standalone/topbar-menu-file-import_file/components/ImportFileMenuItem"
 import Converter from "standalone/topbar-menu-edit-convert/components/convert-definition-menu-item"
 
+import {connect} from 'react-redux';
+
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: 'relative',
@@ -95,11 +97,13 @@ const plugins = {
   TopbarPlugin
 }
 
-const defaults = {
+
+let defaults = {
   // we have the `dom_id` prop for legacy reasons
   dom_id: '#swaggerContainer',
   // layout: "EditorLayout",
   layout: "StandaloneLayout",
+  // url: props.url ? props.url : "",
   presets: [
     SwaggerUI.presets.apis,
 
@@ -114,14 +118,42 @@ const defaults = {
   oas3GeneratorUrl: "https://generator3.swagger.io/openapi.json",
   swagger2ConverterUrl: "https://converter.swagger.io/api/convert",
 }
+
+
 // let mergedOptions = deepMerge(defaults, options)
 
 // mergedOptions.presets = defaults.presets.concat(options.presets || [])
 // mergedOptions.plugins = defaults.plugins.concat(options.plugins || [])
 
 class Editor extends Component {
+  constructor(props) {
+    super(props);
+
+  }
+
   componentDidMount() {
-    SwaggerUi(defaults);
+    this.defaults = {
+      // we have the `dom_id` prop for legacy reasons
+      dom_id: '#swaggerContainer',
+      // layout: "EditorLayout",
+      layout: "StandaloneLayout",
+      url: this.props.url ? this.props.url : "",
+      presets: [
+        SwaggerUI.presets.apis,
+    
+      ],
+      plugins: Object.values(plugins),
+      components: {
+        EditorLayout,
+        StandaloneLayout
+      },
+      showExtensions: true,
+      swagger2GeneratorUrl: "https://generator.swagger.io/api/swagger.json",
+      oas3GeneratorUrl: "https://generator3.swagger.io/openapi.json",
+      swagger2ConverterUrl: "https://converter.swagger.io/api/convert",
+    }
+
+    SwaggerUi(this.defaults );
   }
 
   render() {
@@ -136,21 +168,45 @@ class Editor extends Component {
 
 
 
-export default (opt) =>{
+const EditorWrapper =  (opt) =>{
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const {handler, handlerName} = opt
+
+    const {handler,
+      offBoard,
+      functions,
+      handlerName,
+      outsideOpen,
+      outsideOpenSet,
+      needDownload,
+      setNeedDownload,
+      linkForDownload,
+      hideButton} = opt
 
     const handleClickOpen = () => {
       setOpen(true);
+      console.log("AAAAAA")
+      if(outsideOpenSet) outsideOpenSet(true);
     };
   
     const handleClose = () => {
+      console.log("BBBBB")
       setOpen(false);
+      if(outsideOpenSet) outsideOpenSet(false);
     };
-  
+
+
+    console.log("Functions:",functions, needDownload)
+
+    if(functions.functions && needDownload){
+      // functions.functions.importFromURL(linkForDownload, ()=>setNeedDownload(false));
+    }
+    
     return (
+
+   
               <div>
+        {hideButton ? "" :
               <Button
         variant="contained"
         color="default"
@@ -160,85 +216,97 @@ export default (opt) =>{
         startIcon={<CreateIcon />}
         >
         Create yaml
-        </Button>
-        <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-          <AppBar className={classes.appBar}>
-            <Toolbar>
-              <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-                <CloseIcon />
-              </IconButton>
+        </Button>}
+
+          <Dialog fullScreen open={open || (hideButton)} TransitionComponent={Transition}>
+            <AppBar className={classes.appBar}>
+              <Toolbar>
+                <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                  <CloseIcon />
+                </IconButton>
 
 
-              <Button variant="contained"
-              color="default"
-              startIcon={<CloudUploadIcon />}
-              onClick={()=>Functions.saveAsJson() }
-              style={{margin:"20px",fontSize:"7pt"}}
-            >
-              Download As Json
-            </Button>
-
-              <Button variant="contained"
-              color="default"
-              startIcon={<CloudUploadIcon />}
-              onClick={()=>Functions.saveAsYaml() }
-              style={{margin:"20px",fontSize:"7pt"}}
-            >
-              Download As Yaml
-
-            </Button>
-            <Tooltip title="Clear Editor" arrow>
-              <IconButton variant="contained"
-              color="default"
-              startIcon={<CloudUploadIcon />}
-              onClick={()=>Functions.clearEditor() }
-              style={{margin:"20px"}}
-            >
-              <ClearAllIcon />
-              {/* Clear Editor */}
-            </IconButton>
-            </Tooltip>
-
-            <Tooltip title="Import from URL" arrow>
-              <IconButton variant="contained"
-              color="default"
-              startIcon={<CloudUploadIcon />}
-              onClick={()=>Functions.importFromURL() }
-              style={{margin:"20px"}}
-            >
-              <LinkIcon />
-              {/* Import from URL */}
-            </IconButton>
-            </Tooltip>
-
-            <Tooltip title="Convert To yaml" arrow>
-            <IconButton variant="contained"
-              color="default"
-              startIcon={<CloudUploadIcon />}
-              onClick={()=>Functions.convertToYaml() }
-              style={{margin:"20px"}}
-            >
-              <RedoIcon />
-              {/* Convert To yaml */}
-            </IconButton>
-           </Tooltip>
-              
-
-              <Uploader style={{margin:"20px"}} onDocumentLoad={(content)=>Functions.onDocumentLoad(content)}/>
-              <Converter style={{margin:"20px"}} isSwagger2={Functions.isSwagger2} onClick={Functions.convert} />
-
-
-              <Button style={{marginLeft:"35%",fontSize:"10pt"}} autoFocus edge="end" color="inherit" onClick={()=>{Functions.uploadTo(handler);handleClose();}}>
-              { handlerName ? handlerName : "Handler"}
+                <Button variant="contained"
+                color="default"
+                startIcon={<CloudUploadIcon />}
+                onClick={()=>{if(functions.functions)functions.functions.saveAsJson()} }
+                style={{margin:"20px",fontSize:"7pt"}}
+              >
+                Download As Json
               </Button>
-              
-            </Toolbar>
-          </AppBar>
+
+                <Button variant="contained"
+                color="default"
+                startIcon={<CloudUploadIcon />}
+                onClick={()=>{if(functions.functions)functions.functions.saveAsYaml()} }
+                style={{margin:"20px",fontSize:"7pt"}}
+              >
+                Download As Yaml
+
+              </Button>
+              <Tooltip title="Clear Editor" arrow>
+                <IconButton variant="contained"
+                color="default"
+                startIcon={<CloudUploadIcon />}
+                onClick={()=>{if(functions.functions)functions.functions.clearEditor() }}
+                style={{margin:"20px"}}
+              >
+                <ClearAllIcon />
+                {/* Clear Editor */}
+              </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Import from URL" arrow>
+                <IconButton variant="contained"
+                color="default"
+                startIcon={<CloudUploadIcon />}
+                onClick={()=>{if(functions.functions)functions.functions.importFromURL()} }
+                style={{margin:"20px"}}
+              >
+                <LinkIcon />
+                {/* Import from URL */}
+              </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Convert To yaml" arrow>
+              <IconButton variant="contained"
+                color="default"
+                startIcon={<CloudUploadIcon />}
+                onClick={()=>{if(functions.functions)functions.functions.convertToYaml()} }
+                style={{margin:"20px"}}
+              >
+                <RedoIcon />
+                {/* Convert To yaml */}
+              </IconButton>
+            </Tooltip>
+                
+
+                <Uploader style={{margin:"20px"}} onDocumentLoad={(content)=>{if(functions.functions)functions.functions.onDocumentLoad(content)}}/>
+                <Converter style={{margin:"20px"}} onClick={()=>{if(functions.functions)functions.functions.convert()}} />
 
 
-        <Editor />
-        </Dialog>
+                <Button style={{marginLeft:"35%",fontSize:"10pt"}} autoFocus edge="end" color="inherit" onClick={()=>{if(functions.functions)functions.functions.uploadTo(handler);handleClose();}}>
+                { handlerName ? handlerName : "Handler"}
+                </Button>
+                
+              </Toolbar>
+            </AppBar>
+
+
+          <Editor url={linkForDownload}/>
+          </Dialog>}
       </div>
     );
   }
   
+
+
+
+
+export default connect(
+  ({editor})=>{
+    return {
+      functions: editor
+    };
+  })(EditorWrapper);
+// export default EditorWrapper;

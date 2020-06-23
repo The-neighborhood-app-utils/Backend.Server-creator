@@ -2,7 +2,7 @@ import React from "react"
 import PropTypes from "prop-types"
 import Swagger from "swagger-client"
 import URL from "url"
-import "whatwg-fetch"
+
 import DropdownMenu from "./DropdownMenu"
 import reactFileDownload from "react-file-download"
 import YAML from "js-yaml"
@@ -10,6 +10,13 @@ import beautifyJson from "json-beautify"
 import Functions from 'standalone/functions'
 import Logo from "./logo_small.svg"
 import Button from '@material-ui/core/Button';
+
+import editorActions from 'redux/actions/editor';
+import store from 'store'
+import {server_uri, httpClient} from "Net/requests_info.js"
+
+const CONTENT_KEY = "swagger-editor-content"
+let localStorage = window.localStorage
 
 export default class Topbar extends React.Component {
   constructor(props, context) {
@@ -19,10 +26,34 @@ export default class Topbar extends React.Component {
       swaggerClient: null,
       clients: [],
       servers: [],
-      definitionVersion: "Unknown"
+      definitionVersion: "Unknown",
+      notification: false,
+      notificationInfo: ""
     }
 
+
+  
+
+    let { getComponent, specSelectors, topbarActions } = this.props
+    Functions.saveAsJson =  this.saveAsJson
+    Functions.saveAsYaml =  this.saveAsYaml
+    Functions.clearEditor =  this.clearEditor
+    Functions.importFromURL =  this.importFromURL
+    Functions.convertToYaml =  this.convertToYaml
+    Functions.uploadTo =  this.uploadTo
+    Functions.isSwagger2 =  specSelectors.isSwagger2()
+    Functions.convert =  () => topbarActions.showModal("convert")
+    // Functions.ConvertDefinitionMenuItem =  <ConvertDefinitionMenuItem 
+    //                               isSwagger2={specSelectors.isSwagger2()}
+    //                               onClick={() => topbarActions.showModal("convert")}
+                                
+    Functions.onDocumentLoad = content => this.props.specActions.updateSpec(content)
+
+    store.dispatch(editorActions.setFunctions(Functions));
+
   }
+
+
 
   getGeneratorUrl = () => {
     const { isOAS3, isSwagger2 } = this.props.specSelectors
@@ -92,18 +123,35 @@ export default class Topbar extends React.Component {
 
   // Menu actions
 
-  importFromURL = () => {
-    let url = prompt("Enter the URL to import from:")
+  importFromURL = (url,setLoaded) => {
+    if(!url)
+        url = prompt("Enter the URL to import from:")
+
+  
+
 
     if(url) {
-      fetch(url)
-        .then(res => res.text())
-        .then(text => {
-          this.props.specActions.updateSpec(
-            YAML.safeDump(YAML.safeLoad(text), {
-              lineWidth: -1
-            })
-          )
+      httpClient.get(url)
+        .then(result => {
+          let text = result.data
+          console.log("OOOOOK",text)
+
+            try{
+            this.props.specActions.updateSpec(
+              YAML.safeDump(YAML.safeLoad(text), {
+                lineWidth: -1
+              })
+            )
+            if(setLoaded) setLoaded();
+            }catch(error){
+              // let response = error.response ? error.response.data: error.response
+              // let status = error.response ? error.response.status: error.response
+              this.props.specActions.updateSpec(text);
+              if(setLoaded) setLoaded();
+            }
+        },
+        (error) => {
+           console.error(error)
         })
     }
   }
@@ -139,7 +187,13 @@ export default class Topbar extends React.Component {
   }
 
   uploadTo = (uploader)=>{
-    let editorContent = this.props.specSelectors.specStr()
+    // if(localStorage.getItem(CONTENT_KEY)) 
+    // this.props.specActions.updateSpec(localStorage.getItem(CONTENT_KEY), "local-storage")
+
+    let editorContent = localStorage.getItem(CONTENT_KEY)
+    console.log("ST CONTTT",localStorage.getItem(CONTENT_KEY))
+
+
     let language = this.getDefinitionLanguage()
     let fileName = this.getFileName()
 
@@ -153,6 +207,7 @@ export default class Topbar extends React.Component {
     }
 
     if(language === "yaml") {
+      console.log("ISSS YAML");
       //// the content is YAML,
       //// so download as-is
       return uploader(editorContent)
@@ -349,19 +404,7 @@ export default class Topbar extends React.Component {
     const ImportFileMenuItem = getComponent("ImportFileMenuItem")
     const ConvertDefinitionMenuItem = getComponent("ConvertDefinitionMenuItem")
 
-    Functions.saveAsJson =  this.saveAsJson
-    Functions.saveAsYaml =  this.saveAsYaml
-    Functions.clearEditor =  this.clearEditor
-    Functions.importFromURL =  this.importFromURL
-    Functions.convertToYaml =  this.convertToYaml
-    Functions.uploadTo =  this.uploadTo
-    Functions.isSwagger2 =  specSelectors.isSwagger2()
-    Functions.convert =  () => topbarActions.showModal("convert")
-    // Functions.ConvertDefinitionMenuItem =  <ConvertDefinitionMenuItem 
-    //                               isSwagger2={specSelectors.isSwagger2()}
-    //                               onClick={() => topbarActions.showModal("convert")}
-                                
-    Functions.onDocumentLoad = content => this.props.specActions.updateSpec(content)
+
 
     let showServersMenu = this.state.servers && this.state.servers.length
     let showClientsMenu = this.state.clients && this.state.clients.length

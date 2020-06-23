@@ -1,0 +1,104 @@
+project-name: yandex-taxi-loyalty
+short-name: loyalty
+wiki: https://wiki.yandex-team.ru/taxi/backend/architecture/loyalty/
+maintainers:
+  - Alexander Yarats <alexyarats@yandex-team.ru>
+libraries:
+  - Boost::regex
+  - ICU::uc
+  - ICU::i18n
+  - yandex-taxi-library-localization
+  - yandex-taxi-library-psql-orm
+  - yandex-taxi-library-taximeter-constructor
+  - yandex-taxi-library-tvm2
+  - yandex-taxi-library-user-agent-parser
+  - yandex-taxi-userver-core
+  - yandex-taxi-userver-postgresql
+  - yandex-taxi-library-client-tags
+  
+postgresql:
+  databases:
+    - loyalty
+testsuite:
+  enabled: true
+  apikeys:
+    unique_drivers: ["supersecret"]
+
+pytest:
+  pytest-plugins:
+    - tests_plugins.mock_driver_authorizer
+    - taxi_tests.plugins.localizations
+    - taxi_tests.plugins.mocks.localizations_replica
+  userver-fixture:
+    client-deps:
+      - mock_localizations_replica
+    service-headers:
+      X-YaTaxi-API-Key: 'supersecret'
+ctest:
+  enabled: true
+  tests-folder: tests
+tvm2:
+  secdist-service-name: loyalty
+secdist:
+  testsuite:
+    values:
+      settings_override:
+        UNIQUE_DRIVERS_API_TOKEN: $UNIQUE_DRIVERS_API_TOKEN
+        TVM_SERVICES: $TVM_SERVICES
+
+debian:
+  source_package_name: yandex-taxi-loyalty
+  maintainer_name: Alexandr Yarats
+  maintainer_login: alexyarats
+  dependencies:
+    - python3-yandex-pgmigrate
+
+uservice_unit:
+  description: Driver loyalty service
+
+  hostname:
+    production:
+      - loyalty.taxi.yandex.net
+    testing:
+      - loyalty.taxi.tst.yandex.net
+    unstable:
+      - loyalty.taxi.dev.yandex.net
+
+  grafana:
+    production: https://grafana.yandex-team.ru/d/4KMSbC3ik/taxi_conductor_taxi_loyalty?refresh=30s&orgId=1
+    testing: https://grafana.yandex-team.ru/d/h67SbCqmz/taxi_conductor_taxi_test_loyalty?refresh=30s&orgId=1
+
+configs:
+  names:
+  - DRIVER_METRICS_STORAGE_CLIENT_SETTINGS
+  - HTTP_CLIENTS
+  - LOCALES_MAPPING
+  - LOCALES_SUPPORTED
+  - LOYALTY_ALLOWED_ZONES
+  - LOYALTY_CARDS
+  - LOYALTY_CARDS_LOCATIONS
+  - LOYALTY_CARDS_MIN_TAXIMETER_VERSION
+  - LOYALTY_CHECK_WALLET_BALANCE
+  - LOYALTY_MIN_ACTIVITY
+  - LOYALTY_MIN_RATING
+  - LOYALTY_MIN_TAXIMETER_VERSION
+  - LOYALTY_PGAAS_TIMEOUTS
+  - LOYALTY_REGISTRATION_ENABLED
+  - LOYALTY_REWARDS
+  - LOYALTY_SERVICE_ENABLED
+  - LOYALTY_STATUSES
+  - PROTOCOL_RETRIES
+  - PROTOCOL_TIMEOUT_MS
+  - TAXIMETER_MIN_XS_VERSION
+  - UNIQUE_DRIVERS_CLIENT_RETRIES
+  - UNIQUE_DRIVERS_CLIENT_TIMEOUT_MS
+  - USERVICE_DRIVER_AUTHORIZER_RETRIES
+  - USERVICE_DRIVER_AUTHORIZER_TIMEOUT_MS
+
+clients:
+  autogenerate: true
+  names:
+  - driver-authorizer
+  
+handlers:
+  autogenerate: true
